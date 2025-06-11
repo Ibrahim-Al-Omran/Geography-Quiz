@@ -12,7 +12,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [options, setOptions] = useState([]);
-  const [feedback, setFeedback] = useState(null); // "correct" or "wrong"
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all?fields=name,capital,flags")
@@ -50,7 +49,6 @@ function App() {
     setScore(0);
     setStarted(true);
     setFinished(false);
-    setFeedback(null);
   }
 
   function renderQuestion() {
@@ -92,24 +90,18 @@ function App() {
           <div className="options-grid">
             {options.map((option, idx) => (
               <button
+                id={`option-${idx}`}
                 key={idx}
-                onClick={() => handleAnswer(option)}
                 className="option-button"
+                onClick={() => handleAnswer(option)}
               >
                 {option}
               </button>
-            ))}
+            ))}           
           </div>
+          <p className="live-score">Current Score: <span className="score-value">{score}</span> / {questionIdx===0? 0 :questionIdx+1} </p>
         </div>
 
-        {/* Feedback */}
-        <div className="feedback-container">
-          {feedback && (
-            <p className={`feedback-text ${feedback === "correct" ? "feedback-correct" : "feedback-wrong"}`}>
-              {feedback === "correct" ? "✅ Correct!" : "❌ Wrong!"}
-            </p>
-          )}
-        </div>
       </div>
     );
   }
@@ -118,11 +110,34 @@ function App() {
     // Remove focus from the clicked button to prevent focus ring from persisting
     document.activeElement.blur();
     
+    for (let i = 0; i < 4; i++) {
+      const optionButton = document.getElementById(`option-${i}`);
+      const buttonText = optionButton.textContent;
+      if (buttonText === answer) {
+        optionButton.classList.add("correct");
+      } else {
+        optionButton.classList.add("wrong");
+      }
+    }
+
     if (selected === answer) {
       setScore((prev) => prev + 1);
-      setFeedback("correct");
-    } else {
-      setFeedback("wrong");
+      const liveScore = document.querySelector('.live-score');
+      const scoreValue = document.querySelector('.score-value');
+      
+      if (liveScore) {
+        liveScore.classList.add('celebrate');
+        setTimeout(() => {
+          liveScore.classList.remove('celebrate');
+        }, 600);
+      }
+      
+      if (scoreValue) {
+        scoreValue.classList.add('update');
+        setTimeout(() => {
+          scoreValue.classList.remove('update');
+        }, 600);
+      }
     }
 
     // Move to next question after delay
@@ -134,11 +149,14 @@ function App() {
         setQuestionIdx(nextIndex);
         setAnswer(nextCapital);
         setOptions(generateOptions(nextCapital, countries));
-        setFeedback(null); // reset
       } else {
         setFinished(true);
       }
-    }, 1000);
+      for (let i = 0; i < 4; i++) {
+      const optionButton = document.getElementById(`option-${i}`);
+      optionButton.classList.remove("correct", "wrong");
+      }
+    }, 1200);
   }
 
   function generateOptions(correctCapital, allCountries) {
