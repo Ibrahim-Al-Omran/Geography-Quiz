@@ -33,7 +33,7 @@ git clone https://github.com/Ibrahim-Al-Omran/Geography-Quiz.git
 cd Geography-Quiz
 npm install
 npm start
-
+```
 
 ## 🧠 Inspiration
 - This project was built to sharpen React skills and make geography learning fun and engaging. Over 50 users have played and enjoyed it since launch.
