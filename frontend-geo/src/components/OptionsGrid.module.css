@@ -1,0 +1,135 @@
+.optionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .optionsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 768px) {
+  .optionsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  
+  .optionButton {
+    padding: 0.8rem 1.1rem;
+    font-size: 0.9rem;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+  
+  .optionButton:focus {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .flagOptionImage {
+    max-width: 110px;
+    height: 55px;
+  }
+}
+
+.optionButton {
+  background-color: white;
+  color: #2563eb;
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.optionButton:focus {
+  outline: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.optionButton:active {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.optionFlagImage {
+  max-width: 100%; 
+  max-height: 50px; 
+  object-fit: contain; 
+  border-radius: 0.25rem; 
+  border: 1px solid #eee; 
+}
+.correctAnswerFlag img {
+    height: 30px;
+    vertical-align: middle;
+    margin-left: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9; /* Light background for the small preview */
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.optionButton:hover {
+  background-color: #eff6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #93c5fd;
+}
+
+.optionButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Flag option image styling */
+.flagOptionImage {
+  width: 100%;
+  max-width: 220px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.15s ease;
+}
+
+.optionButton:hover .flagOptionImage {
+  transform: scale(1.02);
+  border-color: #93c5fd;
+}
+
+/* Make buttons for flag mode taller to accommodate images */
+.optionsGrid .optionButton:has(.flagOptionImage) {
+  padding: 0.5rem;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.correct {
+  background-color: #d1fae5 !important;
+  border-color: #10b981 !important;
+}
+
+.correct .flagOptionImage {
+  opacity: 1 !important;
+  display: block !important;
+}
+
+.wrong {
+  background-color: #fee2e2 !important;
+  border-color: #f87171 !important;
+}
+
+.wrong .flagOptionImage {
+  opacity: 1 !important;
+  display: block !important;
+}

@@ -10,7 +10,7 @@ app.use(cors());
 // Route to get all countries
 app.get('/countries', async (req, res) => {
   try {
-    const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,capital,flags');
+    const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,capital,flags,region');
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching countries:', error.message);
