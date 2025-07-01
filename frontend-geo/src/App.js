@@ -26,6 +26,7 @@ function App() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [scoreCelebration, setScoreCelebration] = useState(false);
   const [region, setRegion] = useState(null);
+  const [filteredCountries, setFilteredCountries] = useState([]); 
   const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(Boolean))];
 
 
@@ -35,9 +36,8 @@ function App() {
     setMode(selectedMode);
 
     // Filter countries by region if a region is selected
-    const filtered = selectedRegion === "All"
-      ? countries
-      : countries.filter(c => c.region === selectedRegion);
+    const filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);
+    setFilteredCountries(filtered); // Store filtered countries in state
 
     const shuffled = shuffle(filtered);
     const tenQuestions = shuffled.slice(0, 10);
@@ -48,7 +48,11 @@ function App() {
 
     setQuiz(tenQuestions);
     setAnswer(correctAnswer);
-    setOptions(generateOptions(correctAnswer, countries, selectedMode));
+    setOptions(generateOptions(
+      selectedMode === "capital" ? correctAnswer : tenQuestions[0]?.name?.common || "",
+      filtered, // Use filtered countries here
+      selectedMode
+    ));
     setQuestionIdx(0);
     setScore(0);
     setStarted(true);
@@ -75,7 +79,11 @@ function App() {
           quiz[nextIndex]?.flags.png || "";
         setQuestionIdx(nextIndex);
         setAnswer(nextAnswer);
-        setOptions(generateOptions(nextAnswer, countries, mode));
+        setOptions(generateOptions(
+          mode === "capital" ? nextAnswer : quiz[nextIndex]?.name?.common || "",
+          filteredCountries, // Use filtered countries here too
+          mode
+        ));
       } else {
         setFinished(true);
       }
