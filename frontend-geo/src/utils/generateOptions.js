@@ -10,7 +10,6 @@ export default function generateOptions(correctAnswer, filteredCountries, mode) 
     return shuffle([...incorrect, correctAnswer]);
   } 
   else if (mode === "flag") {
-    // For flag mode, correctAnswer should be the country name, not the flag URL
     const correctCountry = filteredCountries.find(c => c.name.common === correctAnswer);
     const correctFlagUrl = correctCountry?.flags?.png;
     
