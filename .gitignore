@@ -48,3 +48,10 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignore node_modules in frontend and backend
+/frontend-geo/node_modules/
+/backend-geo/node_modules/
+
+# Ignore build output folder in frontend
+/frontend-geo/build/
