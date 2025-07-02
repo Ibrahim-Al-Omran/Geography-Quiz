@@ -36,6 +36,36 @@
   }
 }
 
+/* Disable hover animations on mobile devices */
+@media (max-width: 768px) {
+  .optionButton:hover {
+    background-color: white;
+    transform: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-color: #e5e7eb;
+  }
+
+  .optionButton:hover .flagOptionImage {
+    transform: none;
+    border-color: #e5e7eb;
+  }
+}
+
+/* Also disable on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .optionButton:hover {
+    background-color: white;
+    transform: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-color: #e5e7eb;
+  }
+
+  .optionButton:hover .flagOptionImage {
+    transform: none;
+    border-color: #e5e7eb;
+  }
+}
+
 .optionButton {
   background-color: white;
   color: #2563eb;
