@@ -27,16 +27,22 @@ function App() {
   const [scoreCelebration, setScoreCelebration] = useState(false);
   const [region, setRegion] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]); 
-  const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(Boolean))];
+  const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(region => region && region !== "Antarctic"))];
 
 
 
   //determine the type of quiz, and pass on all info
-  function setupQuiz(selectedMode, selectedRegion) {
+  function setupQuiz(selectedMode, selectedRegion, selectedDifficulty) {
     setMode(selectedMode);
 
     // Filter countries by region if a region is selected
-    const filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);
+    let filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);
+    
+    // Filter by difficulty based on population
+    if (selectedDifficulty !== "Random") {
+      filtered = filterDiff(filtered, selectedDifficulty);
+    }
+    
     setFilteredCountries(filtered); // Store filtered countries in state
 
     const shuffled = shuffle(filtered);
@@ -57,6 +63,24 @@ function App() {
     setScore(0);
     setStarted(true);
     setFinished(false);
+  }
+
+
+  function filterDiff(countries, diff) {
+    return countries.filter(country => {
+      const population = country.population || 0;
+      
+      switch(diff) {
+        case "Easy":
+          return population > 10000000; // > 10 million
+        case "Medium":
+          return population >= 1000000 && population <= 10000000; // 1-10 million
+        case "Hard":
+          return population < 1000000; // < 1 million
+        default:
+          return true; // Random - include all
+      }
+    });
   }
 
 

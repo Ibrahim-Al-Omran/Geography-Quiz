@@ -6,7 +6,7 @@ export default function useCountries() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all?fields=name,capital,flags,region")
+    fetch("https://restcountries.com/v3.1/all?fields=name,capital,flags,region,population")
       .then((res) => res.json())
       .then((data) => {
         const filtered = data.filter(c => c.capital && c.capital[0] && c.flags?.png);
