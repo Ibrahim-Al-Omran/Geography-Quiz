@@ -118,3 +118,11 @@
     margin-bottom: 0.6rem;
   }
 }
+
+.timer {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  color: #ef4444; /* red for urgency */
+}
+

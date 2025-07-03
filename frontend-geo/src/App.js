@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, use } from "react";
 import './App.css';
 import './components/global.css';
 import StartScreen from './components/StartScreen';
-import QuizContainer from './components/QuizContainer'; // Changed from QuizCard
-import ResultScreen from './components/ResultScreen'; // Changed from FinishScreen
+import QuizContainer from './components/QuizContainer'; 
+import ResultScreen from './components/ResultScreen'; 
 import useCountries from './hooks/useCountries';
 import shuffle from "./utils/shuffle";
 import generateOptions from "./utils/generateOptions";
 import Loading from './components/Loading';
 import ErrorScreen from './components/ErrorScreen';
+import useSurvivalTimer from "./hooks/timer";
 
 
 
@@ -30,6 +31,16 @@ function App() {
   const [streak, setStreak] = useState(0);  
   //remove antarctic from regions since it only has 2 countries
   const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(region => region && region !== "Antarctic"))];
+  const[timeLeft, setTimeLeft] = useState(2); 
+  const timerRef = useRef(null);
+  useSurvivalTimer({
+    timeLeft,
+    setTimeLeft,
+    survival,
+    finished,
+    started,
+    onTimeout: () => handleAnswer(null) 
+  });
 
 
 
@@ -63,6 +74,8 @@ function App() {
     ));
     setQuestionIdx(0);
     setScore(0);
+    setStreak(0);
+    setTimeLeft(2);
     setStarted(true);
     setFinished(false);
   }
@@ -121,38 +134,43 @@ function App() {
     document.activeElement.blur();
     setSelectedAnswer(selected);
 
-    if (selected === answer) {
+    const correct = selected === answer;
+
+    if (correct) {
       setScore((prev) => prev + 1);
-      if (survival){
+      if (survival) {
         setStreak((prev) => prev + 1);
       }
       setScoreCelebration(true);
-      setTimeout(() => setScoreCelebration(false), 1000); // 1s animation
-    }
-    else {if (survival) {
+      setTimeout(() => setScoreCelebration(false), 1000);
+    } else if (survival) {
+      setFinished(true);
       setStreak(0);
-    }}
+      clearTimeout(timerRef.current); // Stop timer
+      return;
+    }
 
     setTimeout(() => {
       if (questionIdx < quiz.length - 1) {
         const nextIndex = questionIdx + 1;
-        const nextAnswer = mode === "capital" ? 
-          quiz[nextIndex]?.capital?.[0] || "" :
-          quiz[nextIndex]?.flags.png || "";
+        const nextQuestion = quiz[nextIndex];
+        const nextAnswer = mode === "capital"
+          ? nextQuestion?.capital?.[0] || ""
+          : nextQuestion?.flags.png || "";
+
         setQuestionIdx(nextIndex);
         setAnswer(nextAnswer);
         setOptions(generateOptions(
-          mode === "capital" ? nextAnswer : quiz[nextIndex]?.name?.common || "",
-          filteredCountries, // Use filtered countries here too
+          mode === "capital" ? nextAnswer : nextQuestion?.name?.common || "",
+          filteredCountries,
           mode
         ));
-      } else {
+
         if (survival) {
-          setFinished(true);
-          // Reset streak for survival mode
-          setStreak(0);
-          return;
-        }        
+          setTimeLeft(2); // Reset timer
+        }
+      } 
+      else {
         setFinished(true);
       }
       setSelectedAnswer(null);
@@ -197,6 +215,7 @@ function App() {
             onBack={restartQuiz}
             streak={streak}
             survival={survival}
+            timeLeft={timeLeft}
           />
         )}
         {finished && (
