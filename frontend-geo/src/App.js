@@ -29,18 +29,23 @@ function App() {
   const [survival, setSurvival] = useState(false);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [streak, setStreak] = useState(0);  
+  const [isWaitingForNext, setIsWaitingForNext] = useState(false);
+
   //remove antarctic from regions since it only has 2 countries
   const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(region => region && region !== "Antarctic"))];
   const[timeLeft, setTimeLeft] = useState(2); 
   const timerRef = useRef(null);
+
   useSurvivalTimer({
     timeLeft,
     setTimeLeft,
     survival,
     finished,
     started,
-    onTimeout: () => handleAnswer(null) 
+    pause: isWaitingForNext, // <====
+    onTimeout: () => handleAnswer(null)
   });
+
 
 
 
@@ -133,20 +138,20 @@ function App() {
   function handleAnswer(selected) {
     document.activeElement.blur();
     setSelectedAnswer(selected);
+    setIsWaitingForNext(true); // <<< pause timer
 
     const correct = selected === answer;
 
     if (correct) {
       setScore((prev) => prev + 1);
-      if (survival) {
-        setStreak((prev) => prev + 1);
-      }
+      if (survival) setStreak((prev) => prev + 1);
       setScoreCelebration(true);
       setTimeout(() => setScoreCelebration(false), 1000);
     } else if (survival) {
-      setFinished(true);
-      setStreak(0);
-      clearTimeout(timerRef.current); // Stop timer
+      setTimeout(() => {
+        setFinished(true);
+        setStreak(0);
+      }, 1200); // Give time to show correct answer
       return;
     }
 
@@ -165,17 +170,17 @@ function App() {
           filteredCountries,
           mode
         ));
-
-        if (survival) {
-          setTimeLeft(2); // Reset timer
-        }
-      } 
-      else {
+        if (survival) setTimeLeft(2); // reset timer
+      } else {
         setFinished(true);
       }
+
       setSelectedAnswer(null);
+      setIsWaitingForNext(false); // <<< resume timer
     }, 1200);
   }
+
+
 
   //##########  === RESTART QUIZ === ###########
   function restartQuiz() {
