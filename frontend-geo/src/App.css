@@ -10,7 +10,7 @@ html, body, #root {
   align-items: center;
   min-height: 100vh;
   padding: 1rem;
-  background-color: #e0f2fe;
+  background: linear-gradient(0deg, rgb(111, 158, 230), #c9e7f5);
   overflow-y: auto;
 }
 

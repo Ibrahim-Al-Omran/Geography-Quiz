@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import styles from './StartScreen.module.css';
 import Toggle from './Toggle';
+import SurvivalRules from './SurvivalRules';
 
 const StartScreen = ({ onStart, regions }) => {
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("Random");
   const [survival, setSurvival] = useState(false);
+  const [showSurvivalModal, setShowSurvivalModal] = useState(false);
+  const [pendingMode, setPendingMode] = useState(null);
 
   const handleStart = (mode) => {
-    onStart(mode, selectedRegion, selectedDifficulty, survival);
+    if (survival) {
+      setPendingMode(mode);
+      setShowSurvivalModal(true);
+    } else {
+      onStart(mode, selectedRegion, selectedDifficulty, survival);
+    }
+  };
+
+  const handleSurvivalStart = (mode) => {
+    onStart(mode, selectedRegion, selectedDifficulty, true);
   };
 
   const handleRegionChange = (e) => {
@@ -74,14 +86,19 @@ const StartScreen = ({ onStart, regions }) => {
             Party Mode
           </button>
 
-          
           <div>
             <label className={styles.blitzLabel}>Survival Mode</label>
             <Toggle onToggle={handleSurvival} />
           </div>
-
         </div>
       </div>
+      
+      <SurvivalRules
+        isOpen={showSurvivalModal}
+        onClose={() => setShowSurvivalModal(false)}
+        onStart={handleSurvivalStart}
+        mode={pendingMode}
+      />
     </div>
   );
 };
