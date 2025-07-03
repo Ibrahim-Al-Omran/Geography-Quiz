@@ -12,15 +12,37 @@
   padding: 3rem;
   width: 100%;
   max-width: 400px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  max-height: 1000px;
+  min-height: 400px; 
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease, transform 0.4s ease;
 }
+
+.compact {
+  max-height: 350px;
+  padding: 2rem;
+}
+
+.cardWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* or whatever container height you use */
+  transition: all 0.4s ease;
+}
+
+
+
 
 .buttonStack {
   display: flex;
-  flex-direction: column;  /* This is key - makes buttons stack vertically */
+  flex-direction: column; 
   align-items: center;
   width: 120%;
   gap: 1rem;
@@ -76,4 +98,28 @@
 .buttonPrimary:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+.blitzLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: .5rem;
+  font-weight: 500;
+  color: #374151;
+  gap: 0.5rem;
+}
+
+.selectContainer {
+  transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+  overflow: hidden;
+  max-height: 300px;
+  opacity: 1;
+}
+
+.selectContainer.hidden {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0.95);
+  pointer-events: none;
 }

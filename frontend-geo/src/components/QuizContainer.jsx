@@ -14,7 +14,10 @@ function QuizContainer({mode,
   handleAnswer, 
   selectedAnswer,
   scoreCelebration,
-  onBack  }) {  if (mode === "flag") {
+  onBack,
+  survival,
+  streak  }) { 
+  if (mode === "flag") {
     return (
       <div className={`${styles.card} ${styles.quizContainer} ${mode === "flag" ? styles.flagModeCard : ""}`}>
         {/* Back Button */}
@@ -39,14 +42,15 @@ function QuizContainer({mode,
         {/* Live Score */}
         <div className={styles.liveScoreContainer}>
           <span className={`${styles.liveScore} ${scoreCelebration ? styles.celebrate : ""}`}>
-
-            Score: {score}/{questionIdx+1}
+            {survival ? `Current Streak: ${streak}` : `Score: ${score}/${questionIdx + 1}`}
           </span>
+
         </div>
 
       </div>
     );
-  }  else if (mode === "capital") {
+  }  
+  else if (mode === "capital") {
     return (
       <div className={`${styles.card} ${styles.quizContainer}`}>
         {/* Back Button */}
@@ -71,8 +75,7 @@ function QuizContainer({mode,
         {/* Live Score */}
         <div className={styles.liveScoreContainer}>
           <span className={`${styles.liveScore} ${scoreCelebration ? styles.celebrate : ""}`}>
-
-            Score: {score}/{questionIdx+1}
+            {survival ? `Current Streak: ${streak}` : `Score: ${score}/${questionIdx + 1}`}
           </span>
         </div>
 

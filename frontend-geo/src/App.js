@@ -25,38 +25,40 @@ function App() {
   const [mode, setMode] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [scoreCelebration, setScoreCelebration] = useState(false);
-  const [region, setRegion] = useState(null);
-  const [filteredCountries, setFilteredCountries] = useState([]); 
+  const [survival, setSurvival] = useState(false);
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [streak, setStreak] = useState(0);  
+  //remove antarctic from regions since it only has 2 countries
   const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(region => region && region !== "Antarctic"))];
 
 
 
+  //##########  === GENERAL SETUP === ###########
   //determine the type of quiz, and pass on all info
-  function setupQuiz(selectedMode, selectedRegion, selectedDifficulty) {
+  function setupQuiz(selectedMode, selectedRegion, selectedDifficulty, survival) {
     setMode(selectedMode);
-
-    // Filter countries by region if a region is selected
-    let filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);
-    
-    // Filter by difficulty based on population
-    if (selectedDifficulty !== "Random") {
-      filtered = filterDiff(filtered, selectedDifficulty);
+    setSurvival(survival);
+    if (survival) {
+      setupSurvival(countries, selectedMode);
     }
-    
-    setFilteredCountries(filtered); // Store filtered countries in state
+    else {
+      setupNormal(selectedMode, selectedRegion, selectedDifficulty)
+    }
+  }
 
-    const shuffled = shuffle(filtered);
-    const tenQuestions = shuffled.slice(0, 10);
-
+  //##########  === SURVIVAL SETUP === ###########
+  function setupSurvival(countries, selectedMode) {
+    const shuffled = shuffle(countries);
+    setFilteredCountries(shuffled); //make it easier for generating options later
     const correctAnswer = selectedMode === "capital"
-      ? tenQuestions[0]?.capital?.[0] || ""
-      : tenQuestions[0]?.flags.png || "";
+      ? shuffled[0]?.capital?.[0] || ""
+      : shuffled[0]?.flags.png || "";
 
-    setQuiz(tenQuestions);
+    setQuiz(shuffled);
     setAnswer(correctAnswer);
     setOptions(generateOptions(
-      selectedMode === "capital" ? correctAnswer : tenQuestions[0]?.name?.common || "",
-      filtered, // Use filtered countries here
+      selectedMode === "capital" ? correctAnswer : shuffled[0]?.name?.common || "",
+      countries,
       selectedMode
     ));
     setQuestionIdx(0);
@@ -66,6 +68,37 @@ function App() {
   }
 
 
+  //##########  === NORMAL SETUP === ###########
+  function setupNormal(selectedMode, selectedRegion, selectedDifficulty) {
+    // Filter countries by region if a region is selected
+    let filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);
+    
+    if (selectedDifficulty !== "Random") {
+      filtered = filterDiff(filtered, selectedDifficulty);
+    }
+    
+    setFilteredCountries(filtered); // Store filtered countries in state
+    const shuffled = shuffle(filtered);
+    const tenQuestions = shuffled.slice(0, 10);
+    const correctAnswer = selectedMode === "capital"
+      ? tenQuestions[0]?.capital?.[0] || ""
+      : tenQuestions[0]?.flags.png || "";
+
+    setQuiz(tenQuestions);
+    setAnswer(correctAnswer);
+    setOptions(generateOptions(
+      selectedMode === "capital" ? correctAnswer : tenQuestions[0]?.name?.common || "",
+      filtered,
+      selectedMode
+    ));
+    setQuestionIdx(0);
+    setScore(0);
+    setStarted(true);
+    setFinished(false);
+  }
+
+
+  //##########  === HELPER FOR DIFFICULTY === ###########
   function filterDiff(countries, diff) {
     return countries.filter(country => {
       const population = country.population || 0;
@@ -83,17 +116,22 @@ function App() {
     });
   }
 
-
-
+  //##########  === ANSWER HANDLER === ###########
   function handleAnswer(selected) {
     document.activeElement.blur();
     setSelectedAnswer(selected);
 
     if (selected === answer) {
       setScore((prev) => prev + 1);
+      if (survival){
+        setStreak((prev) => prev + 1);
+      }
       setScoreCelebration(true);
       setTimeout(() => setScoreCelebration(false), 1000); // 1s animation
     }
+    else {if (survival) {
+      setStreak(0);
+    }}
 
     setTimeout(() => {
       if (questionIdx < quiz.length - 1) {
@@ -109,12 +147,19 @@ function App() {
           mode
         ));
       } else {
+        if (survival) {
+          setFinished(true);
+          // Reset streak for survival mode
+          setStreak(0);
+          return;
+        }        
         setFinished(true);
       }
       setSelectedAnswer(null);
     }, 1200);
   }
 
+  //##########  === RESTART QUIZ === ###########
   function restartQuiz() {
     setQuiz([]);
     setAnswer(null);
@@ -126,6 +171,8 @@ function App() {
     setSelectedAnswer(null);
     setMode(null);
     setScoreCelebration(false);
+    setStreak(0); // Reset streak when restarting
+    setSurvival(false);
   }
 
 
@@ -148,6 +195,8 @@ function App() {
             score={score}
             scoreCelebration={scoreCelebration}
             onBack={restartQuiz}
+            streak={streak}
+            survival={survival}
           />
         )}
         {finished && (
