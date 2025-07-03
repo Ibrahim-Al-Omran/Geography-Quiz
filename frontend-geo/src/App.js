@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, use } from "react";
+import React, { useState } from "react";
 import './App.css';
 import './components/global.css';
 import StartScreen from './components/StartScreen';
@@ -10,6 +10,9 @@ import generateOptions from "./utils/generateOptions";
 import Loading from './components/Loading';
 import ErrorScreen from './components/ErrorScreen';
 import useSurvivalTimer from "./hooks/timer";
+import filterDiff from "./utils/filterDiff";
+import nextQuestion from "./utils/nextQuestion";  
+import prevQuestion from "./utils/prevQuestion"; 
 
 
 
@@ -33,8 +36,7 @@ function App() {
 
   //remove antarctic from regions since it only has 2 countries
   const allRegions = ["All", ...new Set(countries.map(c => c.region).filter(region => region && region !== "Antarctic"))];
-  const[timeLeft, setTimeLeft] = useState(2); 
-  const timerRef = useRef(null);
+  const[timeLeft, setTimeLeft] = useState(3); 
 
   useSurvivalTimer({
     timeLeft,
@@ -51,11 +53,14 @@ function App() {
 
   //##########  === GENERAL SETUP === ###########
   //determine the type of quiz, and pass on all info
-  function setupQuiz(selectedMode, selectedRegion, selectedDifficulty, survival) {
+  function setupQuiz(selectedMode, selectedRegion, selectedDifficulty, survival, party) {
     setMode(selectedMode);
     setSurvival(survival);
     if (survival) {
       setupSurvival(countries, selectedMode);
+    }
+    else if (party) {
+      setupParty(countries, selectedMode, selectedRegion, selectedDifficulty);
     }
     else {
       setupNormal(selectedMode, selectedRegion, selectedDifficulty)
@@ -80,7 +85,22 @@ function App() {
     setQuestionIdx(0);
     setScore(0);
     setStreak(0);
-    setTimeLeft(2);
+    setTimeLeft(3);
+    setStarted(true);
+    setFinished(false);
+  }
+
+  function setupParty(countries, selectedRegion, selectedDifficulty) {
+    let filtered = selectedRegion === "All" ? countries : countries.filter(c => c.region === selectedRegion);    
+
+    if (selectedDifficulty !== "Random") {
+      filtered = filterDiff(filtered, selectedDifficulty);
+    }
+    setFilteredCountries(filtered); //make it easier for generating options later
+      const shuffled = shuffle(filtered);
+
+    setQuiz(shuffled);
+    setQuestionIdx(0);
     setStarted(true);
     setFinished(false);
   }
@@ -97,6 +117,10 @@ function App() {
     
     setFilteredCountries(filtered); // Store filtered countries in state
     const shuffled = shuffle(filtered);
+    if (selectedMode === "party") {
+      setupParty(shuffled, selectedRegion, selectedDifficulty);
+      return;
+    }
     const tenQuestions = shuffled.slice(0, 10);
     const correctAnswer = selectedMode === "capital"
       ? tenQuestions[0]?.capital?.[0] || ""
@@ -115,31 +139,23 @@ function App() {
     setFinished(false);
   }
 
-
-  //##########  === HELPER FOR DIFFICULTY === ###########
-  function filterDiff(countries, diff) {
-    return countries.filter(country => {
-      const population = country.population || 0;
-      
-      switch(diff) {
-        case "Easy":
-          return population > 10000000; // > 10 million
-        case "Medium":
-          return population >= 1000000 && population <= 10000000; // 1-10 million
-        case "Hard":
-          return population < 1000000; // < 1 million
-        default:
-          return true; // Random - include all
-      }
-    });
-  }
-
   //##########  === ANSWER HANDLER === ###########
   function handleAnswer(selected) {
+    
     document.activeElement.blur();
     setSelectedAnswer(selected);
     setIsWaitingForNext(true); // <<< pause timer
 
+    if (mode === "party") {
+      if (selected === "A") {
+        nextQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
+        return;
+      }
+      else if (selected === "B") {
+        prevQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
+        return;
+      }
+    }
     const correct = selected === answer;
 
     if (correct) {
@@ -156,27 +172,7 @@ function App() {
     }
 
     setTimeout(() => {
-      if (questionIdx < quiz.length - 1) {
-        const nextIndex = questionIdx + 1;
-        const nextQuestion = quiz[nextIndex];
-        const nextAnswer = mode === "capital"
-          ? nextQuestion?.capital?.[0] || ""
-          : nextQuestion?.flags.png || "";
-
-        setQuestionIdx(nextIndex);
-        setAnswer(nextAnswer);
-        setOptions(generateOptions(
-          mode === "capital" ? nextAnswer : nextQuestion?.name?.common || "",
-          filteredCountries,
-          mode
-        ));
-        if (survival) setTimeLeft(2); // reset timer
-      } else {
-        setFinished(true);
-      }
-
-      setSelectedAnswer(null);
-      setIsWaitingForNext(false); // <<< resume timer
+       nextQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
     }, 1200);
   }
 
@@ -229,6 +225,7 @@ function App() {
             total={quiz.length}
             onRestart={restartQuiz}
             length = {quiz.length}
+            survival={survival}
           />
         )}
       </div>

@@ -5,6 +5,15 @@
   margin-bottom: 2rem;
 }
 
+.cardWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
 .card {
   background-color: white;
   border-radius: 1rem;
@@ -12,41 +21,26 @@
   padding: 3rem;
   width: 100%;
   max-width: 400px;
+  margin: auto;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-
-  max-height: 1000px;
-  min-height: 400px; 
-  overflow: hidden;
   transition: max-height 0.4s ease, padding 0.4s ease, transform 0.4s ease;
 }
 
 .compact {
-  max-height: 350px;
-  padding: 2rem;
+  padding: 2rem 3rem 1.5rem;
 }
-
-.cardWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* or whatever container height you use */
-  transition: all 0.4s ease;
-}
-
-
-
 
 .buttonStack {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   align-items: center;
   width: 120%;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem; 
 }
 
 .regionLabel {
@@ -85,9 +79,10 @@
   border: none;
   font-size: 1.125rem;
   cursor: pointer;
-  transition: all 0.15s ease;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  width: 80%; 
+  width: 80%;
+  max-height: 60px; /* or whatever your button height is */
+  transition: opacity 0.4s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
 }
 
 .buttonPrimary:hover {
@@ -122,4 +117,14 @@
   opacity: 0;
   transform: scaleY(0.95);
   pointer-events: none;
+}
+
+.partyHidden {
+  opacity: 0;
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
 }

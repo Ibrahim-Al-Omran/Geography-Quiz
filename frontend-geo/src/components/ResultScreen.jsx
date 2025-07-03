@@ -6,13 +6,16 @@ function giveFeedback(score, length) {
   if (score >= Math.floor(length / 3)) return "Good effort! Keep practicing!";
   return "Don't worry, try again and you'll improve!";
 }
-const ResultScreen = ({ score, onRestart, length }) => {
+const ResultScreen = ({ score, onRestart, length, survival }) => {
   return (
     <div className={styles.card}>
       <h1 className={styles.title}>Quiz Completed!</h1>
-      <p className={styles.scoreText}>
+      {!survival && <p className={styles.scoreText}>
         Your score: <span className={`${styles.scoreValue} ${styles.update}`}>{score}/{length}</span>
-      </p>
+      </p>}
+      {survival && <p className={styles.scoreText}>
+        Your streak: <span className={`${styles.scoreValue} ${styles.update}`}>{score}</span>
+      </p>}
       <button className={styles.buttonPrimary} onClick={onRestart}>Restart Quiz</button>
       <p className={`${styles.liveScore} ${styles.celebrate}`}>{ giveFeedback(score,length) }</p>
     </div>

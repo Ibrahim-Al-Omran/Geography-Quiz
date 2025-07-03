@@ -20,13 +20,17 @@ function QuizContainer({
   streak,
   timeLeft
 }) {
-  const isFlagMode = mode === "flag";
-  const questionText = isFlagMode
-    ? `What is the flag of `
-    : `What is the capital of `;
+  let questionText = "";
+  if (mode === "flag") {
+    questionText = "What is the flag of ";
+  } else if (mode === "capital") {
+    questionText = "What is the capital of ";
+  } else if (mode === "party") {
+    questionText = "";
+  }
 
   return (
-    <div className={`${styles.card} ${styles.quizContainer} ${isFlagMode ? styles.flagModeCard : ""}`}>
+    <div className={`${styles.card} ${styles.quizContainer} ${(mode==="flag") ? styles.flagModeCard : ""}`}>
       {/* Back Button */}
       <button className={styles.backButton} onClick={onBack}>
         ← Back to Menu
@@ -36,7 +40,7 @@ function QuizContainer({
       <ProgressBar current={questionIdx} total={quiz.length} />
 
       {/* Image for capital mode */}
-      {!isFlagMode && (
+      {!(mode==="flag") && (
         <FlagImage
           src={current.flags.png}
           alt={`Flag of ${current.name.common}`}
@@ -46,7 +50,9 @@ function QuizContainer({
       {/* Question */}
       <h2 className={styles.question}>
         {questionText}
-        <span className={styles.questionHighlight}>{current.name.common}?</span>
+        <span className={styles.questionHighlight}>
+          {current.name.common}{(mode === "flag" || mode === "capital") ? "?" : ""}
+        </span>
       </h2>
 
       {/* Options */}
@@ -65,14 +71,15 @@ function QuizContainer({
         </div>
       )}
 
-      {/* Score/Streak */}
+      {/* Score/Streak (party excluded) */}
+      {(mode != "party") &&
       <div className={styles.liveScoreContainer}>
         <span className={`${styles.liveScore} ${scoreCelebration ? styles.celebrate : ""}`}>
           {survival
             ? `Current Streak: ${streak}`
             : `Score: ${score}/${questionIdx + 1}`}
         </span>
-      </div>
+      </div>}
     </div>
   );
 }

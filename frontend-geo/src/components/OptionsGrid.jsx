@@ -25,7 +25,8 @@ const OptionsGrid = ({ options, onOptionClick, correctAnswer, selectedAnswer, mo
         })}
       </div>
     );
-  }  else if (mode === "flag"){
+  }  
+  else if (mode === "flag"){
     return (
       <div className={styles.optionsGrid}>
         {options?.map((option, index) => {
@@ -50,6 +51,14 @@ const OptionsGrid = ({ options, onOptionClick, correctAnswer, selectedAnswer, mo
             </button>
           );
         })}
+      </div>
+    );
+  }
+  else if (mode === "party") {
+    return (
+      <div className={styles.PartyOptionsGrid}>
+        <button className={styles.PartyOptionButton} onClick={() => onOptionClick("B")}>Previous</button>
+        <button className={styles.PartyOptionButton} onClick={() => onOptionClick("A")}>Next</button>
       </div>
     );
   }

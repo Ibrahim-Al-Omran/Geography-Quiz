@@ -1,4 +1,3 @@
-
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -6,24 +5,21 @@ html, body, #root {
 }
 
 .app-container {
-  min-height: 100vh;
-  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   padding: 1rem;
-  box-sizing: border-box;
-  background: linear-gradient(to bottom right, #f0f7ff, #e0f2fe);
+  background-color: #e0f2fe;
   overflow-y: auto;
 }
 
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .app-container {
-    align-items: flex-start;
-    padding: 0.25rem;
-    min-height: 100vh;
-    zoom: 0.95;
+    padding: 0.5rem; 
+    align-items: flex-start; 
+    padding-top: 2rem;
   }
   
   .card-container {
