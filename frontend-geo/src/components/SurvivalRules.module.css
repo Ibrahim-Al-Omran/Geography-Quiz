@@ -175,3 +175,7 @@
     flex-direction: column;
   }
 }
+
+.ruleText {
+  font-weight: 500;
+}

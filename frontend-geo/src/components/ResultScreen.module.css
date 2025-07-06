@@ -1,6 +1,6 @@
 .title {
   font-size: 1.875rem;
-  font-weight: 700;
+  font-weight: 800; /* Extra bold for result title */
   color: #2563eb;
   margin-bottom: 2rem;
 }
@@ -23,35 +23,83 @@
 
 .scoreText {
   font-size: 1.5rem;
+  font-weight: 600; /* Semi-bold for score text */
   margin-bottom: 1.5rem;
 }
 
 .scoreValue {
-  font-weight: 700;
+  font-weight: 800; /* Extra bold for score values */
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Increased spacing between buttons */
+  width: 100%;
+  max-width: 300px; /* Consistent width */
+  margin: 2rem auto; /* Center the container with more margin */
+  align-items: center;
 }
 
 .buttonPrimary {
-  background-color: #2563eb;
+  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
   color: white;
-  font-weight: 600;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
   border: none;
-  font-size: 1.125rem;
+  border-radius: 0.5rem;
+  padding: 1rem 2rem; /* More padding for better symmetry */
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Sora', sans-serif;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
+  width: 100%; /* Full width of container */
+  min-height: 50px; /* Consistent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  
 }
 
 .buttonPrimary:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.buttonPrimary:active {
+  transform: scale(0.98);
+}
+
+/* Alternative: Side-by-side layout for larger screens */
+@media (min-width: 768px) {
+  .buttonContainer {
+    flex-direction: row;
+    gap: 2rem; /* Horizontal spacing */
+    max-width: 500px;
+  }
+  
+  .buttonPrimary {
+    flex: 1; /* Equal width buttons */
+    min-width: 200px;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .buttonContainer {
+    gap: 1rem;
+    margin: 1.5rem auto;
+  }
+  
+  .buttonPrimary {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
 }
 
 .liveScore {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 600; /* Semi-bold for feedback text */
   color: #4b5563;
   margin-top: 2.25rem;
   text-align: center;

@@ -1,6 +1,6 @@
 .title {
   font-size: 1.875rem;
-  font-weight: 700;
+  font-weight: 800; /* Extra thick */
   color: #2563eb;
   margin-bottom: 2rem;
 }
@@ -48,7 +48,7 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 1rem;
-  font-weight: 500;
+  font-weight: 600; /* Semi-bold instead of 500 */
   color: #374151;
   gap: 0.5rem;
 }
@@ -62,6 +62,7 @@
   font-size: 1rem;
   min-width: 200px;
   cursor: pointer;
+  font-weight: 500; /* Add medium weight */
 }
 
 .regionSelect:focus {
@@ -71,28 +72,29 @@
 }
 
 .buttonPrimary {
-  background-color: #2563eb;
+  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
   color: white;
-  font-weight: 600;
+  font-weight: 500; 
   padding: 1rem 2rem;
   border-radius: 0.5rem;
   border: none;
-  font-size: 1.125rem;
+  font-size: 1rem;
   cursor: pointer;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   width: 80%;
-  max-height: 60px; /* or whatever your button height is */
-  transition: opacity 0.4s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+  max-height: 60px;
+  transition: all 0.3s ease; /* Changed to include transform */
+  font-family: 'Sora', sans-serif;
 }
 
 .buttonPrimary:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05); /* Slightly bigger on hover */
 }
 
-.buttonPrimary:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+.buttonPrimary:active {
+  transform: scale(0.98); /* Slightly smaller when clicked */
 }
 
 .blitzLabel {
@@ -100,7 +102,7 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: .5rem;
-  font-weight: 500;
+  font-weight: 600; /* Semi-bold instead of 500 */
   color: #374151;
   gap: 0.5rem;
 }
@@ -127,4 +129,60 @@
   overflow: hidden;
   pointer-events: none;
   transition: opacity 0.4s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+}
+
+.authPrompt {
+  background: linear-gradient(124deg, rgba(14, 105, 240, 0.1), rgba(0, 174, 255, 0.1));
+  border: 1px solid rgba(14, 105, 240, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.authPrompt p {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  font-weight: 500;
+}
+
+.guestNotice {
+  background: linear-gradient(124deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.guestNotice p:first-child {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.guestNotice p:last-of-type {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.signInButton {
+  background: linear-gradient(124deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9));
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: 'Sora', sans-serif;
+}
+
+.signInButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
 }

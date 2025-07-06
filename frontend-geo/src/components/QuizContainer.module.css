@@ -18,7 +18,8 @@
               0 4px 6px -2px rgba(0, 0, 0, 0.05);
   padding: 2rem;
   width: 100%;
-  max-width: 32rem;
+  max-width: 42rem; /* Increased from 32rem to accommodate longest names */
+  min-width: 38rem; /* Set minimum width to prevent shrinking */
   margin: 0 auto;
   text-align: center;
 }
@@ -29,10 +30,13 @@
   margin-bottom: 2rem;
   color: #1f2937;
   text-align: center;
+  min-height: 3.5rem; /* Reserve space for 2-line country names */;
 }
 
 .questionHighlight {
   color: #2563eb;
+  font-weight: 700; /* Bold for highlighted text */
+  display: inline;
 }
 
 .liveScoreContainer {
@@ -44,7 +48,7 @@
 
 .liveScore {
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600; /* Semi-bold for scores */
   background: #f3f4f6;
   border-radius: 0.5rem;
   padding: 0.5rem 1.5rem;
@@ -85,44 +89,39 @@
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .card {
-    max-width: 100%;
-    min-height: auto;
+    max-width: 95vw; /* Use viewport width on mobile */
+    min-width: 90vw; /* Consistent mobile width */
     padding: 0.8rem;
-    margin: 0.3rem 0;
+    margin: 0.3rem auto; /* Center on mobile */
     transform: scale(0.93);
   }
   
   .question {
     font-size: 1.1rem;
     margin-bottom: 1.2rem;
+    min-height: 2.8rem; /* Smaller reserved height for mobile */
   }
   
   .flagModeCard {
-    max-width: 100%;
+    max-width: 95vw;
+    min-width: 90vw;
     padding: 0.8rem;
     transform: scale(0.9);
   }
-  
-  .liveScore {
-    font-size: 1.1rem;
-    padding: 0.45rem 1.2rem;
-  }
-  
-  .liveScoreContainer {
-    margin: 0.6rem 0 1.2rem 0;
-  }
-  
-  .backButton {
-    font-size: 0.8rem;
-    padding: 0.45rem 0.9rem;
-    margin-bottom: 0.6rem;
+}
+
+/* For very large screens, cap the maximum size */
+@media (min-width: 1200px) {
+  .card {
+    max-width: 45rem;
+    min-width: 42rem;
   }
 }
 
 .timer {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 600; 
   margin-top: 1rem;
-  color: #ef4444; /* red for urgency */
+  color: #ef4444;
 }
 

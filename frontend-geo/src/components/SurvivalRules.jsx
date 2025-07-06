@@ -21,27 +21,27 @@ const SurvivalRulesModal = ({ isOpen, onClose, onStart, mode }) => {
           <div className={styles.rulesList}>
             <div className={styles.rule}>
               <span className={styles.ruleIcon}>⏱️</span>
-              <span>You have <strong>3 seconds</strong> per question</span>
+              <span className={styles.ruleText}>You have <strong>3 seconds</strong> per question</span>
             </div>
             
             <div className={styles.rule}>
               <span className={styles.ruleIcon}>❌</span>
-              <span>One wrong answer and it's <strong>game over</strong></span>
+              <span className={styles.ruleText}>One wrong answer and it's <strong>game over</strong></span>
             </div>
             
             <div className={styles.rule}>
               <span className={styles.ruleIcon}>🔥</span>
-              <span>Build the longest <strong>streak</strong> possible</span>
+              <span className={styles.ruleText}>Build the longest <strong>streak</strong> possible</span>
             </div>
             
             <div className={styles.rule}>
               <span className={styles.ruleIcon}>🌍</span>
-              <span>Questions from <strong>all regions</strong></span>
+              <span className={styles.ruleText}>Questions from <strong>all regions</strong></span>
             </div>
             
             <div className={styles.rule}>
               <span className={styles.ruleIcon}>🎯</span>
-              <span>Random difficulty for maximum challenge</span>
+              <span className={styles.ruleText}>Random difficulty for maximum challenge</span>
             </div>
           </div>
           
