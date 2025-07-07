@@ -5,16 +5,26 @@ import styles from './ScoreSubmission.module.css';
 const ScoreSubmission = ({ streak, mode, onSubmit, onSkip, userId, username }) => {
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+  const handleSubmit = async () => {
     setSubmitting(true);
-    const success = await addScore(userId, username, streak, mode);
-    
-    if (success) {
-      onSubmit(true);
-    } else {
+    try {
+      console.log('Submitting score:', { userId, username, streak, mode });
+      
+      const result = await addScore(userId, username, streak, mode);
+      
+      if (result.success) {
+        console.log('Score submitted successfully');
+        onSubmit(true);
+      } else {
+        console.error('Score submission failed:', result.error);
+        alert(`Failed to submit score: ${result.error}`);
+        onSubmit(false);
+      }
+    } catch (error) {
+      console.error('Error submitting score:', error);
       alert('Failed to submit score. Please try again.');
+      onSubmit(false);
+    } finally {
       setSubmitting(false);
     }
   };

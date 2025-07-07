@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from '../contexts/AuthContext';
 import { logoutUser } from '../firebase/auth';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/config";
 import StartScreen from './StartScreen';
 import QuizContainer from './QuizContainer'; 
 import ResultScreen from './ResultScreen'; 
@@ -16,7 +18,16 @@ import nextQuestion from "../utils/nextQuestion";
 import prevQuestion from "../utils/prevQuestion"; 
 
 function MainApp() {
-  const { user, userProfile, isAuthenticated } = useAuth();
+  const { 
+    user, 
+    userProfile, 
+    setUserProfile,
+    isAuthenticated, 
+    setUser, 
+    setIsAuthenticated, 
+    fetchUserProfile, 
+    setAuthChecked 
+  } = useAuth();
   
   // Your existing state variables
   const [quiz, setQuiz] = useState([]);
@@ -35,6 +46,9 @@ function MainApp() {
   const [streak, setStreak] = useState(0);  
   const [isWaitingForNext, setIsWaitingForNext] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3);
+  const [login, setLogin] = useState(false);
+  const [canRestart, setCanRestart] = useState(false);
+
   
   // Auth modal state
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -55,6 +69,7 @@ function MainApp() {
   // Auth handlers
   const handleLogout = async () => {
     const result = await logoutUser();
+    setLogin(false);
     if (result.success) {
       restartQuiz();
     }
@@ -62,6 +77,7 @@ function MainApp() {
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
+    setLogin(true);
   };
 
   // Updated quiz setup - no longer requires authentication
@@ -202,29 +218,67 @@ function MainApp() {
     setSurvival(false);
   }
 
+  const handleStart = (mode, region, difficulty, isSurvival, useAllCountries = false) => {
+    // Reset state for new game
+    setFinished(false);
+    setQuestionIdx(0);
+    setScore(0);
+    setSelectedAnswer(null);
+    setIsWaitingForNext(false);
+    setScoreCelebration(false);
+    setSurvival(isSurvival);
+    setMode(mode);
+    setStarted(true);
+
+    // Filter countries based on region and difficulty
+    let filtered = countries;
+    if (region !== "All") {
+      filtered = countries.filter(country => country.region === region);
+    }
+    
+    // Apply difficulty filter if needed
+    if (difficulty !== "Random") {
+      filtered = filterDiff(filtered, difficulty);
+    }
+    
+    // Shuffle countries
+    let shuffled = shuffle([...filtered]);
+    
+    // If it's party mode and we're not using all countries, limit to 10
+    if (mode === "party" && !useAllCountries) {
+      shuffled = shuffled.slice(0, 10);
+    }
+    
+    // Generate the quiz
+    const generatedQuiz = generateOptions(shuffled, mode);
+    setQuiz(generatedQuiz);
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setIsAuthenticated(!!user);
+      
+      console.log('Auth state changed:', { 
+        isAuthenticated: !!user,
+        uid: user?.uid,
+        displayName: user?.displayName
+      });
+      
+      if (user) {
+        fetchUserProfile(user.uid);
+      } else {
+        setUserProfile(null); // This is where the error was happening
+      }
+      
+      setAuthChecked(true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="app-container">
-      {/* Header */}
-      <header className="app-header">
-        <div className="logo">Geography Quiz</div>
-        <div className="user-info">
-          {isAuthenticated ? (
-            <>
-              <span>Welcome, {userProfile?.username || user?.displayName}!</span>
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
-              </button>
-            </>
-          ) : (
-            <button 
-              onClick={() => setShowAuthModal(true)} 
-              className="logout-btn"
-            >
-              Login / Sign Up
-            </button>
-          )}
-        </div>
-      </header>
 
       <div className="card-container">
         {loading && <Loading />}
@@ -235,6 +289,9 @@ function MainApp() {
             regions={allRegions}
             isAuthenticated={isAuthenticated}
             onShowAuth={() => setShowAuthModal(true)}
+            user={user}
+            userProfile={userProfile}
+            onLogout={handleLogout}
           />
         )}
         {started && !finished && (
@@ -259,7 +316,15 @@ function MainApp() {
           <ResultScreen
             score={score}
             total={quiz.length}
-            onRestart={restartQuiz}
+            onRestart={() => {
+              if (canRestart) {
+                console.log("Explicitly restarting quiz...");
+                restartQuiz();
+              } else {
+                console.log("Restart blocked - not allowed yet");
+              }
+            }}
+            setCanRestart={setCanRestart}
             length={quiz.length}
             survival={survival}
             mode={mode}
@@ -268,6 +333,7 @@ function MainApp() {
             isAuthenticated={isAuthenticated}
           />
         )}
+
       </div>
 
       {/* Auth Modal */}

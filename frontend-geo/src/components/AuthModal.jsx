@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { loginUser, registerUser } from '../firebase/auth';
 import { isValidUsername } from '../utils/profanityFilter';
 import styles from './AuthModal.module.css';
+import PasswordInput from './PasswordInput';
 
 const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -117,24 +118,32 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
             required
           />
           
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
+          {/* Replace your existing password input */}
+          <div className={styles.inputGroup}>
+            <label htmlFor="password">Password</label>
+            <PasswordInput
+              id="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+              minLength="6"
+            />
+          </div>
           
           {!isLogin && (
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-            />
+            <>
+              {/* And for confirm password if you have it */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <PasswordInput
+                  id="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                  minLength="6"
+                />
+              </div>
+            </>
           )}
           
           {error && <div className={styles.error}>{error}</div>}

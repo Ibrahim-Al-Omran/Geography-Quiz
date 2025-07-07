@@ -1,64 +1,68 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/config';
-import { sanitizeDisplayName } from '../utils/profanityFilter';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  const fetchUserProfile = async (uid) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        setUserProfile(userDoc.data());
+      } else {
+        // Create a default profile if none exists
+        const defaultProfile = {
+          username: user?.displayName || 'User',
+          createdAt: new Date().toISOString(),
+          bestScores: {}
+        };
+        await setDoc(doc(db, 'users', uid), defaultProfile);
+        setUserProfile(defaultProfile);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        setIsAuthenticated(true);
-        
-        // Fetch user profile from Firestore
-        try {
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            // Sanitize display name in case old data exists
-            userData.displayName = sanitizeDisplayName(userData.displayName || userData.username);
-            setUserProfile(userData);
-          }
-        } catch (error) {
-          console.error('Error fetching user profile:', error);
-        }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsAuthenticated(!!currentUser);
+      setAuthChecked(true);
+      
+      if (currentUser) {
+        fetchUserProfile(currentUser.uid);
       } else {
-        setUser(null);
         setUserProfile(null);
-        setIsAuthenticated(false);
       }
-      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   const value = {
     user,
+    setUser,
     userProfile,
-    loading,
-    isAuthenticated
+    setUserProfile,
+    isAuthenticated,
+    setIsAuthenticated,
+    authChecked,
+    setAuthChecked,
+    fetchUserProfile
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

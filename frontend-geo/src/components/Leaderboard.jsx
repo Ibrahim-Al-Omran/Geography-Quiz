@@ -1,45 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { getTopScores } from '../firebase/leaderboard';
 import styles from './Leaderboard.module.css';
+import { getLeaderboard } from '../firebase/leaderboard';
 
 const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('flag');
+  const [filter, setFilter] = useState(currentMode || 'flag');
 
-  // Set the filter to the current game mode when the modal opens
+  // Define fetchScores inside useEffect
   useEffect(() => {
-    if (isOpen && currentMode) {
-      setFilter(currentMode);
-    }
-  }, [isOpen, currentMode]);
+    // Define the function inside the useEffect
+    const fetchScores = async () => {
+      setLoading(true);
+      try {
+        const leaderboardData = await getLeaderboard(filter, 100);
+        setScores(leaderboardData);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Call the function
+    fetchScores();
+  }, [filter]);
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchScores();
-    }
-  }, [isOpen, filter]);
-
-  const fetchScores = async () => {
-    setLoading(true);
-    try {
-      const topScores = await getTopScores(filter, 10);
-      setScores(topScores);
-    } catch (error) {
-      console.error('Error fetching scores:', error);
-      setScores([]);
-    }
-    setLoading(false);
+  const handleClose = () => {
+    console.log('Closing leaderboard');
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay}>
       <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>🏆 Leaderboard</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button 
+            className={styles.closeButton} 
+            onClick={handleClose}
+            type="button"
+          >
+            ✕
+          </button>
         </div>
         
         <div className={styles.filterContainer}>
@@ -73,7 +78,7 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
                     {index > 2 && `#${index + 1}`}
                   </div>
                   <div className={styles.playerInfo}>
-                    <div className={styles.playerName}>{score.playerName}</div>
+                    <div className={styles.playerName}>{score.username}</div>
                     <div className={styles.scoreDetails}>
                       {score.mode} mode • {score.date}
                     </div>

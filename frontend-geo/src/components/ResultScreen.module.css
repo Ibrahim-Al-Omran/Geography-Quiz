@@ -33,67 +33,90 @@
 
 .buttonContainer {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem; /* Increased spacing between buttons */
+  flex-direction: row;
+  gap: 1rem;
   width: 100%;
-  max-width: 300px; /* Consistent width */
-  margin: 2rem auto; /* Center the container with more margin */
+  max-width: 400px;
+  margin: 2rem auto;
   align-items: center;
+  justify-content: center;
 }
 
 .buttonPrimary {
-  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 0.5rem;
-  padding: 1rem 2rem; /* More padding for better symmetry */
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   font-family: 'Sora', sans-serif;
   cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%; /* Full width of container */
-  min-height: 50px; /* Consistent height */
+  transition: all 0.2s ease;
+  flex: 1;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  text-decoration: none;
 }
 
 .buttonPrimary:hover {
-  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
-  transform: scale(1.05);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
 }
 
 .buttonPrimary:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
-/* Alternative: Side-by-side layout for larger screens */
-@media (min-width: 768px) {
-  .buttonContainer {
-    flex-direction: row;
-    gap: 2rem; /* Horizontal spacing */
-    max-width: 500px;
-  }
-  
-  .buttonPrimary {
-    flex: 1; /* Equal width buttons */
-    min-width: 200px;
-  }
+/* Secondary button styling for leaderboard */
+.buttonSecondary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: 'Sora', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  text-decoration: none;
+}
+
+.buttonSecondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.buttonSecondary:active {
+  transform: translateY(0);
 }
 
 /* Mobile responsive */
 @media (max-width: 480px) {
   .buttonContainer {
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
     margin: 1.5rem auto;
   }
   
-  .buttonPrimary {
+  .buttonPrimary,
+  .buttonSecondary {
+    width: 100%;
     padding: 0.875rem 1.5rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
+    min-height: 44px;
   }
 }
 
@@ -112,4 +135,56 @@
 .update {
   animation: scoreUpdate 0.6s ease-out;
   display: inline-block;
+}
+
+/* Add keyframes for animations */
+@keyframes confetti {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scoreUpdate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.scoreSubmitted {
+  display: inline-block;
+  margin-left: 1rem;
+  font-size: 0.75rem;
+  background: #d1fae5;
+  color: #059669;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  animation: fadeIn 0.5s ease;
+  vertical-align: middle;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .scoreSubmitted {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
 }

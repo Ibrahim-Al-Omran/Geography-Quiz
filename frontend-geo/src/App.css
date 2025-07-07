@@ -34,51 +34,9 @@ input, select, textarea {
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(0deg, #9ed8ff 0%, #4676fa 100%);
-}
-
-.app-header {
-  background-color: white;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'Sora', sans-serif;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.app-header .logo {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logout-btn {
-  background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(180deg, #4676fa 0%, #9ed8ff 100%);
+  margin: 0;
+  padding: 0;
 }
 
 .card-container {
@@ -86,10 +44,10 @@ input, select, textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 1rem;
   width: 100%;
   box-sizing: border-box;
-  min-height: calc(100vh - 80px); /* Subtract header height */
+  min-height: 100vh;
 }
 
 /* Ensure StartScreen is visible */
@@ -101,16 +59,44 @@ input, select, textarea {
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   .app-container {
-    padding: 0.5rem; 
-    align-items: flex-start; 
-    padding-top: 2rem;
+    padding: 0;
+    align-items: center;
   }
   
   .card-container {
     width: 100%;
     max-width: none;
-    margin: 0.5rem 0;
-    transform: scale(0.98);
+    margin: 0;
+    transform: none;
+    min-height: 100vh;
+    padding: 0.75rem;
   }
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+}
+
+/* Add this to your App.css or create a new Dropdown.module.css */
+
+/* Style for select dropdowns with arrow */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234676fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px !important;
+  cursor: pointer;
+}
+
+/* For dark mode or different background colors */
+select.dark {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 

@@ -1,0 +1,13 @@
+/* Disable browser's built-in password toggles */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
+/* Additional protection */
+.disableBrowserEye::-ms-reveal,
+.disableBrowserEye::-ms-clear {
+  display: none !important;
+}
