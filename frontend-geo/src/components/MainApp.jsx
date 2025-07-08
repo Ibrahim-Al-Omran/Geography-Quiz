@@ -47,7 +47,7 @@ function MainApp() {
   const [isWaitingForNext, setIsWaitingForNext] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3);
   const [login, setLogin] = useState(false);
-  const [canRestart, setCanRestart] = useState(false);
+  // const [canRestart, setCanRestart] = useState(false);
 
   
   // Auth modal state
@@ -204,6 +204,7 @@ function MainApp() {
   }
 
   function restartQuiz() {
+    console.log("Restarting quiz...");
     setQuiz([]);
     setAnswer(null);
     setScore(0);
@@ -216,6 +217,7 @@ function MainApp() {
     setScoreCelebration(false);
     setStreak(0);
     setSurvival(false);
+    setIsWaitingForNext(false);
   }
 
   const handleStart = (mode, region, difficulty, isSurvival, useAllCountries = false) => {
@@ -316,15 +318,7 @@ function MainApp() {
           <ResultScreen
             score={score}
             total={quiz.length}
-            onRestart={() => {
-              if (canRestart) {
-                console.log("Explicitly restarting quiz...");
-                restartQuiz();
-              } else {
-                console.log("Restart blocked - not allowed yet");
-              }
-            }}
-            setCanRestart={setCanRestart}
+            onRestart={restartQuiz} // Direct call to restartQuiz
             length={quiz.length}
             survival={survival}
             mode={mode}

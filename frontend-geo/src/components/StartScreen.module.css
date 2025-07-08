@@ -218,6 +218,42 @@
   box-sizing: border-box;
 }
 
+/* Add invisible padding using a pseudo-element */
+.startScreenContainer::after {
+  content: "";
+  display: block;
+  height: 3rem; /* Adjust the height for invisible padding */
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .startScreenContainer {
+    min-height: 100vh; /* Ensure it covers the full viewport */
+    padding: 0.75rem; /* Visible padding */
+    position: relative; /* Required for pseudo-element positioning */
+  }
+
+  .startScreenContainer::after {
+    content: "";
+    display: block;
+    height: 3rem; /* Add invisible padding at the bottom */
+  }
+}
+
+@media (max-width: 480px) {
+  .startScreenContainer {
+    padding: 4rem; /* Visible padding */
+    min-height: 100vh; /* Ensure it covers the full viewport */
+    position: relative; /* Required for pseudo-element positioning */
+  }
+
+  .startScreenContainer::after {
+    content: "";
+    display: block;
+    height: 2rem; /* Add invisible padding at the bottom */
+  }
+}
+
 .startCard {
   background: white;
   border-radius: 1rem;

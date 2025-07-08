@@ -9,8 +9,10 @@ function App() {
   return (
     <AuthProvider>
       <div className="app-container">
-        <div className="card-container">
-          <MainApp />
+        <div className="scroll-wrapper">
+          <div className="card-container">
+            <MainApp />
+          </div>
         </div>
       </div>
     </AuthProvider>

@@ -3,7 +3,7 @@ import styles from './ResultScreen.module.css';
 import Leaderboard from './Leaderboard';
 import { addScore } from '../firebase/leaderboard';
 
-const ResultScreen = ({ score, onRestart, length, survival, mode, userId, username, isAuthenticated, setCanRestart }) => {
+const ResultScreen = ({ score, onRestart, length, survival, mode, userId, username, isAuthenticated }) => {
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [submittingScore, setSubmittingScore] = useState(false);
@@ -62,13 +62,10 @@ const ResultScreen = ({ score, onRestart, length, survival, mode, userId, userna
 
   const handleLeaderboardClose = () => {
     setShowLeaderboard(false);
-    setCanRestart(true);
   };
 
   const handleRestart = () => {
-    if (showLeaderboard) {
-      return;
-    }
+    // Remove the leaderboard check - allow restart anytime
     onRestart();
   };
 
@@ -110,9 +107,8 @@ const ResultScreen = ({ score, onRestart, length, survival, mode, userId, userna
         <button 
           className={styles.buttonPrimary} 
           onClick={handleRestart}
-          disabled={showLeaderboard}
         >
-          {showLeaderboard ? 'Close Leaderboard to Restart' : 'Restart Quiz'}
+          Restart Quiz
         </button>
         
         {survival && (
