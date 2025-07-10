@@ -27,6 +27,7 @@
   
   .optionButton:focus {
     outline: none;
+    translate: none;
     -webkit-tap-highlight-color: transparent;
   }
   
@@ -36,34 +37,122 @@
   }
 }
 
-/* Disable hover animations on mobile devices */
-@media (max-width: 768px) {
+/* Fix existing styles - update the hover and focus handling */
+
+/* Move all hover styles into this media query */
+@media (hover: hover) {
+  /* General button hover (for text options) */
   .optionButton:hover {
-    background-color: white;
-    transform: none;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border-color: #e5e7eb;
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
   }
 
+  /* Flag button specific hover */
+  .optionButton:has(.flagOptionImage):hover {
+    background: #f9f9f9 !important; /* Keep consistent with base style */
+    border-color: #93c5fd;
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Flag image specific hover */
   .optionButton:hover .flagOptionImage {
-    transform: none;
-    border-color: #e5e7eb;
+    transform: scale(1.02);
+    border-color: white;
+  }
+
+  /* Party button hover styles */
+  .PartyOptionButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  }
+
+  .PartyOptionButton:first-child:hover {
+    background-color: #fde68a;
+    border-color: #d97706;
+    color: #78350f;
+  }
+
+  .PartyOptionButton:last-child:hover {
+    background-color: #bfdbfe;
+    border-color: #2563eb;
+    color: #1e3a8a;
   }
 }
 
-/* Also disable on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .optionButton:hover {
-    background-color: white;
+/* Touch device styles - remove hover and focus outlines */
+@media (hover: none) {
+  /* Remove ALL hover styles for touch devices */
+  .optionButton:hover,
+  .optionButton:has(.flagOptionImage):hover,
+  .PartyOptionButton:hover,
+  .PartyOptionButton:first-child:hover,
+  .PartyOptionButton:last-child:hover {
     transform: none;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background-color: inherit;
     border-color: #e5e7eb;
   }
-
+  
+  /* Remove hover effects from flag images specifically */
   .optionButton:hover .flagOptionImage {
     transform: none;
-    border-color: #e5e7eb;
+    border-color: white;
   }
+  
+  /* Remove default focus styles on touch */
+  .optionButton:focus,
+  .optionButton:has(.flagOptionImage):focus,
+  .PartyOptionButton:focus {
+    outline: none;
+  }
+  
+  /* Flag options specific active state for touch feedback */
+  .optionButton:has(.flagOptionImage):active {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    transform: scale(0.98);
+  }
+  
+  /* Flag image specific active state */
+  .optionButton:active .flagOptionImage {
+    opacity: 0.95;
+  }
+}
+
+/* Flag-specific active state for both hover and touch */
+.optionButton:has(.flagOptionImage):active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+.optionButton:active {
+  transform: scale(0.98);
+  transition: transform 0.1s;
+}
+
+
+
+/* Specific styling for flag buttons - base style */
+.optionButton:has(.flagOptionImage) {
+  background: #f9f9f9 !important; /* Light grey background instead of white */
+  border: 2px solid #e5e7eb;
+  padding: 0.5rem;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Flag option image styling - base style */
+.flagOptionImage {
+  width: 100%;
+  max-width: 220px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb; /* Subtle border for the flag */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Slight shadow to lift flag from background */
+  transition: all 0.15s ease;
 }
 
 /* General option button (for text-based options) */
@@ -87,67 +176,14 @@
 }
 
 
-/* Specific styling for flag buttons - override the blue background */
-.optionButton:has(.flagOptionImage) {
-  background: white !important; /* White background for flag buttons */
-  border: 2px solid #e5e7eb;
-  padding: 0.5rem;
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Keep focus styles only for keyboard navigation */
+.optionButton:focus-visible,
+.PartyOptionButton:focus-visible {
+  outline: 2px solid #4676fa;
+  outline-offset: 2px;
 }
 
-.optionButton:has(.flagOptionImage):hover {
-  background: white !important; /* Keep white background on hover */
-  border-color: #93c5fd;
-  transform: scale(1.05);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-}
-
-/* Flag option image styling */
-.flagOptionImage {
-  width: 100%;
-  max-width: 220px;
-  height: 110px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 2px solid white;
-  transition: all 0.15s ease;
-}
-
-.optionButton:hover .flagOptionImage {
-  transform: scale(1.02);
-  border-color: white;
-}
-
-/* General button hover (for text options) */
-.optionButton:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-}
-
-.optionButton:active {
-  transform: scale(0.98);
-}
-
-.optionFlagImage {
-  max-width: 100%; 
-  max-height: 50px; 
-  object-fit: contain; 
-  border-radius: 0.25rem; 
-  border: 1px solid #eee; 
-}
-.correctAnswerFlag img {
-    height: 30px;
-    vertical-align: middle;
-    margin-left: 5px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9; /* Light background for the small preview */
-    padding: 2px;
-    border-radius: 2px;
-}
-
+/* Correct and Wrong answer styles */
 .correct {
   background-color: #d1fae5 !important;
   border-color: #10b981 !important;

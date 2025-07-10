@@ -69,7 +69,8 @@
 }
 
 .buttonPrimary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
+  transition: transform 0.1s;
 }
 
 /* Secondary button styling for leaderboard */
@@ -100,7 +101,8 @@
 }
 
 .buttonSecondary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
+  transition: transform 0.1s;
 }
 
 /* Mobile responsive */

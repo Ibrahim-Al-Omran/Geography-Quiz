@@ -11,6 +11,7 @@
   z-index: 1000;
   padding: 1rem;
   animation: fadeIn 0.3s ease;
+  cursor: pointer; /* Change cursor to indicate clickable overlay */
 }
 
 .modalCard {
@@ -22,6 +23,7 @@
   max-height: 90vh;
   overflow-y: auto;
   animation: slideUp 0.3s ease;
+  cursor: default; /* Reset cursor for card content */
 }
 
 .modalHeader {
@@ -55,11 +57,6 @@
   transition: all 0.2s ease;
 }
 
-.closeButton:hover {
-  color: #374151;
-  background-color: #f3f4f6;
-}
-
 .filterContainer {
   display: flex;
   gap: 0.5rem;
@@ -78,25 +75,21 @@
   font-weight: 500;
   font-family: 'Sora', sans-serif;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease; /* Faster transition for better touch feel */
   font-size: 0.875rem;
   box-shadow: none;
-}
-
-.filterButton:hover {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
-  transform: scale(1.05);
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none !important;
+  position: relative; /* For active effect */
 }
 
 .filterButton.active {
   background: linear-gradient(124deg, rgb(14, 105, 240), #00aeff);
   color: white;
   border-color: transparent;
-}
-
-.filterButton.active:hover {
-  transform: scale(1.05);
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .modalBody {
@@ -135,14 +128,19 @@
   transition: all 0.2s ease;
 }
 
-.scoreItem:hover {
-  background-color: #f3f4f6;
-  transform: translateY(-1px);
-}
-
-.scoreItem.topThree {
+.scoreItem.first {
   background: linear-gradient(135deg, #fef3c7, #fde68a);
   border-color: #f59e0b;
+}
+
+.scoreItem.second {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-color: #6c757d;
+}
+
+.scoreItem.third {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-color: #8f601a;
 }
 
 .rank {
@@ -201,7 +199,11 @@
 @media (max-width: 768px) {
   .modalCard {
     margin: 0.5rem;
-    max-height: 85vh;
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+    padding-bottom: 2.5rem; /* Extra space for mobile */
+    border-radius: 0.75rem;
   }
   
   .modalHeader {
@@ -222,6 +224,7 @@
     padding: 0.75rem;
     font-size: 1rem;
   }
+  
   
   .modalBody {
     padding: 1rem;
@@ -246,6 +249,13 @@
   }
 }
 
+@media (min-width: 769px) {
+  .modalCard {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
 @media (max-width: 480px) {
   .scoreItem {
     flex-direction: column;
@@ -261,4 +271,90 @@
     font-size: 2rem;
     color: #059669;
   }
+}
+
+/* Move all hover styles inside hover media query */
+@media (hover: hover) {
+  /* Close button hover */
+  .closeButton:hover {
+    color: #374151;
+    background-color: #f3f4f6;
+  }
+  
+  /* Filter button hover */
+  .filterButton:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    transform: scale(1.05);
+  }
+  
+  /* Active filter button hover */
+  .filterButton.active:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Score item hover */
+  .scoreItem:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-1px);
+  }
+}
+
+/* Touch device styles - remove hover effects */
+@media (hover: none) {
+  /* Remove hover effects from buttons */
+  .closeButton:hover,
+  .filterButton:hover,
+  .filterButton.active:hover {
+    transform: none;
+    background-color: inherit;
+    border-color: inherit;
+  }
+  
+  /* Remove hover from score items */
+  .scoreItem:hover {
+    transform: none;
+    background-color: inherit;
+  }
+  
+  /* Enhanced touch feedback - sink effect matching OptionsGrid */
+  .closeButton:active {
+    background-color: #f3f4f6;
+    transform: scale(0.95);
+  }
+  
+  /* Improved sink-in effect for filter buttons */
+  .filterButton:active {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    transform: scale(0.98);
+  }
+  
+  /* Add sink effect to active button too */
+  /* .filterButton.active:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  } */
+  
+  /* Active state feedback for score items */
+  .scoreItem:active {
+    background-color: #f3f4f6;
+    transform: scale(0.99);
+  }
+  
+  /* Remove any default mobile outline */
+  *:focus {
+    outline: none !important;
+  }
+  
+  /* Prevent any default browser highlights */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.closeButton:focus-visible,
+.filterButton:focus-visible {
+  outline: 2px solid #4676fa;
+  outline-offset: 2px;
 }

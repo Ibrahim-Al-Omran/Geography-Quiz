@@ -94,7 +94,8 @@
 }
 
 .buttonPrimary:active {
-  transform: scale(0.98); /* Slightly smaller when clicked */
+  transform: scale(0.98);
+  transition: transform 0.1s;
 }
 
 .blitzLabel {
@@ -238,6 +239,15 @@
     display: block;
     height: 3rem; /* Add invisible padding at the bottom */
   }
+
+  .buttonPrimary {
+    width: 92%;
+  }
+
+  .buttonPrimary:hover{
+    transform: none;
+  }
+  
 }
 
 @media (max-width: 480px) {

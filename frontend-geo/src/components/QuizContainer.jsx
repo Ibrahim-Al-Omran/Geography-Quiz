@@ -61,13 +61,15 @@ function QuizContainer({
         />
       )}
 
-      {/* Question */}
+      {/* Question - Modified to stay on one line */}
       <h2 className={styles.question}>
-        {questionText}
-        <span className={styles.questionHighlight}>
-          {current.name?.common || 'Unknown Country'}
+        <span className={styles.questionInner}>
+          {questionText}
+          <span className={styles.questionHighlight}>
+            {current.name?.common || 'Unknown Country'}
+          </span>
+          {(mode === "flag" || mode === "capital") ? "?" : ""}
         </span>
-        {(mode === "flag" || mode === "capital") ? "?" : ""}
       </h2>
 
       {/* Options */}
@@ -87,7 +89,7 @@ function QuizContainer({
       )}
 
       {/* Score/Streak (party excluded) */}
-      {(mode != "party") &&
+      {(mode !== "party") &&
       <div className={styles.liveScoreContainer}>
         <span className={`${styles.liveScore} ${scoreCelebration ? styles.celebrate : ""}`}>
           {survival

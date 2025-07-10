@@ -31,10 +31,18 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
     onClose();
   };
 
+  // Handler for overlay clicks
+  const handleOverlayClick = (e) => {
+    // Only close if the click was directly on the overlay (not its children)
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+  
   if (!isOpen) return null;
 
   return (
-    <div className={styles.modalOverlay}>
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>🏆 Leaderboard</h3>
@@ -42,6 +50,7 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
             className={styles.closeButton} 
             onClick={handleClose}
             type="button"
+            aria-label="Close leaderboard"
           >
             ✕
           </button>
@@ -70,7 +79,19 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
           ) : (
             <div className={styles.scoresList}>
               {scores.map((score, index) => (
-                <div key={score.id} className={`${styles.scoreItem} ${index < 3 ? styles.topThree : ''}`}>
+                <div
+                  key={score.id}
+                  className={
+                    `${styles.scoreItem} ` +
+                    (index === 0
+                      ? styles.first
+                      : index === 1
+                      ? styles.second
+                      : index === 2
+                      ? styles.third
+                      : '')
+                  }
+                >
                   <div className={styles.rank}>
                     {index === 0 && '🥇'}
                     {index === 1 && '🥈'}
