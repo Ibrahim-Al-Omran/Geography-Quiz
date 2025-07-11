@@ -1,30 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Leaderboard.module.css';
 import { getLeaderboard } from '../firebase/leaderboard';
+import { useAuth } from '../contexts/AuthContext';
 
 const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
   const [scores, setScores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState(currentMode || 'flag');
+  const [authReady, setAuthReady] = useState(false);
+
+  // Get auth data
+  const { user, userProfile, authChecked } = useAuth();
+
+  // First useEffect - check if auth data is stable
+  useEffect(() => {
+    if (authChecked) {
+      // If authenticated user, make sure we have profile data
+      if (user) {
+        if (userProfile || !user.displayName) {
+          setAuthReady(true);
+        }
+      } else {
+        // Not logged in, we can proceed
+        setAuthReady(true);
+      }
+    }
+  }, [authChecked, user, userProfile]);
+
+  // Fetch scores only after auth is ready
+  useEffect(() => {
+    if (isOpen && authReady) {
+      fetchScores(filter);
+    }
+  }, [isOpen, filter, authReady]);
 
   // Define fetchScores inside useEffect
-  useEffect(() => {
-    // Define the function inside the useEffect
-    const fetchScores = async () => {
-      setLoading(true);
-      try {
-        const leaderboardData = await getLeaderboard(filter, 100);
-        setScores(leaderboardData);
-      } catch (error) {
-        console.error('Error fetching leaderboard:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    // Call the function
-    fetchScores();
-  }, [filter]);
+  const fetchScores = async (mode) => {
+    setLoading(true);
+    try {
+      const leaderboardData = await getLeaderboard(mode, 100);
+      setScores(leaderboardData);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClose = () => {
     console.log('Closing leaderboard');
@@ -38,7 +59,7 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
       onClose();
     }
   };
-  
+
   if (!isOpen) return null;
 
   return (
@@ -72,8 +93,11 @@ const Leaderboard = ({ isOpen, onClose, currentMode = 'flag' }) => {
         </div>
         
         <div className={styles.modalBody}>
-          {loading ? (
-            <div className={styles.loading}>Loading scores...</div>
+          {!authReady || loading ? (
+            <div className={styles.loading}>
+              <div className={styles.loadingSpinner}></div>
+              <p>Loading scores...</p>
+            </div>
           ) : scores.length === 0 ? (
             <div className={styles.noScores}>No scores yet for {filter} mode. Be the first!</div>
           ) : (

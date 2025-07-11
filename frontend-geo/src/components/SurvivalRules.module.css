@@ -248,3 +248,9 @@
     overflow-y: auto;
   }
 }
+
+.warning {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}

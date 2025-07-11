@@ -3,7 +3,7 @@ import styles from './ResultScreen.module.css';
 import Leaderboard from './Leaderboard';
 import { addScore } from '../firebase/leaderboard';
 
-const ResultScreen = ({ score, onRestart, length, survival, mode, userId, username, isAuthenticated }) => {
+const ResultScreen = ({ score, onRestart, length, survival, mode, userId, username, isAuthenticated, onShowAuth }) => {
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [submittingScore, setSubmittingScore] = useState(false);
@@ -64,10 +64,9 @@ const ResultScreen = ({ score, onRestart, length, survival, mode, userId, userna
     setShowLeaderboard(false);
   };
 
-  const handleRestart = () => {
-    // Remove the leaderboard check - allow restart anytime
-    onRestart();
-  };
+  function handleRestart(mainMenu) {
+    onRestart(mainMenu);
+  }
 
   const giveFeedback = (score, length) => {
     if (survival) {
@@ -103,12 +102,32 @@ const ResultScreen = ({ score, onRestart, length, survival, mode, userId, userna
         </p>
       )}
       
+      {/* Show login/signup prompt if not authenticated */}
+      {!isAuthenticated && survival && (
+        <div className={styles.authPrompt}>
+          <p className={styles.warning}>
+            <span style={{ color: 'red', fontWeight: 'bold' }}>
+              Your score is not saved!
+            </span>
+          </p>
+          <p>Sign up or log in to save your score:</p>
+          <button className={styles.authButton} onClick={onShowAuth}>
+            Login / Sign Up
+          </button>
+        </div>
+      )}
+      
       <div className={styles.buttonContainer}>
         <button 
           className={styles.buttonPrimary} 
-          onClick={handleRestart}
+          onClick={() => handleRestart(false)}
         >
           Restart Quiz
+        </button>
+        <button
+          className={styles.buttonPrimary}
+          onClick={() => handleRestart(true)}>
+            Main Menu
         </button>
         
         {survival && (

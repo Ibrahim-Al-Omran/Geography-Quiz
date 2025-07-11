@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './SurvivalRules.module.css';
 
-const SurvivalRulesModal = ({ isOpen, onClose, onStart, mode }) => {
+const SurvivalRulesModal = ({ isOpen, onClose, onStart, mode, isAuthenticated }) => {
   if (!isOpen) return null;
 
   const handleStart = () => {
@@ -48,6 +48,15 @@ const SurvivalRulesModal = ({ isOpen, onClose, onStart, mode }) => {
           <div className={styles.challenge}>
             <p>Can you beat the ultimate geography challenge?</p>
           </div>
+
+          {/* Warning for logged-out users */}
+          {!isAuthenticated && (
+            <p className={styles.warning}>
+              <span style={{ color: 'red', fontWeight: 'bold' }}>
+                Warning: Your score will not be saved unless you log in!
+              </span>
+            </p>
+          )}
         </div>
         
         <div className={styles.modalFooter}>

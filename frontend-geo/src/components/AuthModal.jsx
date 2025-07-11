@@ -40,35 +40,36 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       
       if (isLogin) {
         result = await loginUser(formData.email, formData.password);
+        // For login, make sure onAuthSuccess has the complete user data
+        if (result.success) {
+          setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+          onAuthSuccess(result.user); // Pass complete user object
+        } else {
+          setError(result.message);
+        }
       } else {
-        // Validate username before registration
-        const usernameCheck = isValidUsername(formData.username);
-        if (!usernameCheck.valid) {
-          setError(usernameCheck.message);
+        // Registration validation
+        if (!usernameValidation.valid) {
+          setError(usernameValidation.message);
           setLoading(false);
           return;
         }
         
         if (formData.password !== formData.confirmPassword) {
-          setError('Passwords do not match');
+          setError("Passwords don't match");
           setLoading(false);
           return;
         }
         
-        if (formData.password.length < 6) {
-          setError('Password must be at least 6 characters long');
-          setLoading(false);
-          return;
-        }
-        
+        // For registration
         result = await registerUser(formData.email, formData.password, formData.username);
-      }
-
-      if (result.success) {
-        setFormData({ username: '', email: '', password: '', confirmPassword: '' });
-        onAuthSuccess();
-      } else {
-        setError(result.message);
+        if (result.success) {
+          console.log('Registration successful with username:', result.user.displayName);
+          setFormData({ username: '', email: '', password: '', confirmPassword: '' });
+          onAuthSuccess(result.user); // Pass complete user object
+        } else {
+          setError(result.message);
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');

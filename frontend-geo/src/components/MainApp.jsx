@@ -16,6 +16,8 @@ import useSurvivalTimer from "../hooks/timer";
 import filterDiff from "../utils/filterDiff";
 import nextQuestion from "../utils/nextQuestion";  
 import prevQuestion from "../utils/prevQuestion"; 
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 function MainApp() {
   const { 
@@ -26,7 +28,9 @@ function MainApp() {
     setUser, 
     setIsAuthenticated, 
     fetchUserProfile, 
-    setAuthChecked 
+    authChecked,  // Add this line to fix the error
+    setAuthChecked,
+    updateUserWithProfile
   } = useAuth();
   
   // Your existing state variables
@@ -47,7 +51,11 @@ function MainApp() {
   const [isWaitingForNext, setIsWaitingForNext] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3);
   const [login, setLogin] = useState(false);
-  // const [canRestart, setCanRestart] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true); // Add or update these state variables
+  const [pendingScore, setPendingScore] = useState(null); // Add a state to track the score to save
+  const [region, setRegion] = useState("All");
+  const [diff, setDiff] = useState("Random");
+  const [partyMode, setPartyMode] = useState(false);
 
   
   // Auth modal state
@@ -75,15 +83,74 @@ function MainApp() {
     }
   };
 
-  const handleAuthSuccess = () => {
+  // Add this useEffect to handle the loading state
+  useEffect(() => {
+    // Only set authLoading to false when we have stable user data
+    if (authChecked) {
+      // If user is logged in, wait until we have a userProfile
+      if (isAuthenticated && user) {
+        if (userProfile || !user.displayName) {
+          // We have user profile data or there's no displayName to wait for
+          setAuthLoading(false);
+        }
+      } else {
+        // Not authenticated, no need to wait
+        setAuthLoading(false);
+      }
+    }
+  }, [authChecked, isAuthenticated, user, userProfile]);
+
+  // Replace your existing handleAuthSuccess function with this one
+  const handleAuthSuccess = (userData) => {
+    console.log('Auth success with user data:', userData);
+    
+    if (userData) {
+      // Force the displayName to be used
+      const userWithName = {
+        ...userData,
+        displayName: userData.displayName || userData.email.split('@')[0]
+      };
+      
+      // Set loading true during the update
+      setAuthLoading(true);
+      
+      // Update the auth context
+      updateUserWithProfile(userWithName);
+      setUser(userWithName);
+
+      // Save the pending score if there is one
+      if (pendingScore) {
+        saveScoreToDatabase(userWithName.uid, pendingScore);
+        setPendingScore(null); // Clear the pending score
+      }
+    }
+    
     setShowAuthModal(false);
-    setLogin(true);
+  };
+
+  // Add a function to save the score to the database
+  const saveScoreToDatabase = async (userId, score) => {
+    try {
+      const scoreData = {
+        userId,
+        score,
+        mode: 'survival',
+        timestamp: new Date().toISOString()
+      };
+      await setDoc(doc(db, 'scores', `${userId}-${Date.now()}`), scoreData);
+      console.log('Score saved:', scoreData);
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
   };
 
   // Updated quiz setup - no longer requires authentication
   function setupQuiz(selectedMode, selectedRegion, selectedDifficulty, survival, party) {
     setMode(selectedMode);
     setSurvival(survival);
+    setRegion(selectedRegion);
+    setDiff(selectedDifficulty);
+    setPartyMode(party);
     if (survival) {
       setupSurvival(countries, selectedMode);
     }
@@ -203,58 +270,44 @@ function MainApp() {
     }, 1200);
   }
 
-  function restartQuiz() {
-    console.log("Restarting quiz...");
-    setQuiz([]);
-    setAnswer(null);
-    setScore(0);
-    setQuestionIdx(0);
-    setStarted(false);
-    setFinished(false);
-    setOptions([]);
-    setSelectedAnswer(null);
-    setMode(null);
-    setScoreCelebration(false);
-    setStreak(0);
-    setSurvival(false);
-    setIsWaitingForNext(false);
+  function restartQuiz(mainMenu) {
+    if(mainMenu){
+      setQuiz([]);
+      setAnswer(null);
+      setScore(0);
+      setQuestionIdx(0);
+      setStarted(false);
+      setFinished(false);
+      setOptions([]);
+      setSelectedAnswer(null);
+      setMode(null);
+      setScoreCelebration(false);
+      setStreak(0);
+      setSurvival(false);
+      setIsWaitingForNext(false);
+      return;
+    }
+    else {
+      setQuiz([]);
+      setAnswer(null);
+      setScore(0);
+      setQuestionIdx(0);
+      setStarted(false);
+      setFinished(false);
+      setOptions([]);
+      setSelectedAnswer(null);
+      setScoreCelebration(false);
+      setStreak(0);
+      setIsWaitingForNext(false);
+      setTimeLeft(3);
+      setupQuiz(mode, region, diff, survival, partyMode);
+      return;
+    }
+    return;
+    
   }
 
-  const handleStart = (mode, region, difficulty, isSurvival, useAllCountries = false) => {
-    // Reset state for new game
-    setFinished(false);
-    setQuestionIdx(0);
-    setScore(0);
-    setSelectedAnswer(null);
-    setIsWaitingForNext(false);
-    setScoreCelebration(false);
-    setSurvival(isSurvival);
-    setMode(mode);
-    setStarted(true);
-
-    // Filter countries based on region and difficulty
-    let filtered = countries;
-    if (region !== "All") {
-      filtered = countries.filter(country => country.region === region);
-    }
-    
-    // Apply difficulty filter if needed
-    if (difficulty !== "Random") {
-      filtered = filterDiff(filtered, difficulty);
-    }
-    
-    // Shuffle countries
-    let shuffled = shuffle([...filtered]);
-    
-    // If it's party mode and we're not using all countries, limit to 10
-    if (mode === "party" && !useAllCountries) {
-      shuffled = shuffled.slice(0, 10);
-    }
-    
-    // Generate the quiz
-    const generatedQuiz = generateOptions(shuffled, mode);
-    setQuiz(generatedQuiz);
-  };
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -270,14 +323,19 @@ function MainApp() {
       if (user) {
         fetchUserProfile(user.uid);
       } else {
-        setUserProfile(null); // This is where the error was happening
+        setUserProfile(null);
       }
       
       setAuthChecked(true);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [fetchUserProfile, setAuthChecked, setIsAuthenticated, setUser, setUserProfile]);
+
+  // In your render function, show a loading state if authLoading is true
+  if (loading || authLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="app-container">
@@ -312,6 +370,7 @@ function MainApp() {
             streak={streak}
             survival={survival}
             timeLeft={timeLeft}
+            username={userProfile?.username || user?.displayName || 'Player'}
           />
         )}
         {finished && (
@@ -319,12 +378,15 @@ function MainApp() {
             score={score}
             total={quiz.length}
             onRestart={restartQuiz} // Direct call to restartQuiz
-            length={quiz.length}
+            
             survival={survival}
             mode={mode}
             userId={user?.uid}
-            username={userProfile?.username || user?.displayName}
+            username={userProfile?.username || user?.displayName || 'Player'}
             isAuthenticated={isAuthenticated}
+            onShowAuth={() => setShowAuthModal(true)}
+            saveScore={(score) => setPendingScore(score)} // Save score for later
+            length={quiz.length} // Ensure this is passed correctly
           />
         )}
 

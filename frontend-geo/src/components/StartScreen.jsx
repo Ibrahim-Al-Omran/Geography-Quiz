@@ -54,6 +54,15 @@ const StartScreen = ({ onStart, regions, isAuthenticated, onShowAuth, user, user
     }
   };
 
+  // Calculate display name with priority order
+  const displayName = userProfile?.username || user?.displayName || 'Player';
+  
+  console.log('StartScreen rendering with:', { 
+    user: user?.displayName, 
+    profile: userProfile?.username,
+    final: displayName
+  });
+
   return (
     <div className={styles.startScreenContainer}>
       <div className={`${styles.card} ${survival ? styles.compact : ""}`}>
@@ -64,7 +73,7 @@ const StartScreen = ({ onStart, regions, isAuthenticated, onShowAuth, user, user
           {isAuthenticated ? (
             <div className={styles.userWelcome}>
               <p className={styles.welcomeMessage}>
-                Welcome, {userProfile?.username || user?.displayName || 'User'}!
+                Welcome, {displayName}!
               </p>
               <button className={styles.logoutButton} onClick={onLogout}>
                 Logout
@@ -151,6 +160,7 @@ const StartScreen = ({ onStart, regions, isAuthenticated, onShowAuth, user, user
         onClose={() => setShowSurvivalModal(false)}
         onStart={handleSurvivalStart}
         mode={pendingMode}
+        isAuthenticated={isAuthenticated} 
       />
 
       {/* Add Party Rules Modal */}

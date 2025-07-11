@@ -1,20 +1,19 @@
 # 🌍 Geo Trivia
 
-An interactive geography quiz web app built with React that challenges players to identify countries by their flags, capitals, or locations. Deployed live at **[geo-trivia-sage.vercel.app](https://geo-trivia-sage.vercel.app)**, it has already been played by **50+ users**.
-
-![Geo Trivia Screenshot](https://geo-trivia-sage.vercel.app/preview.png) <!-- Optional: Add a screenshot if available -->
+An interactive geography quiz web app built with React that challenges players to identify countries by their flags, capitals, or locations. Deployed live at **[pinpoint-ibrs.vercel.app](https://pinpoint-ibrs.vercel.app)**, it has already been played by **50+ users**.
 
 ## 🔗 Live Demo
-👉 [Play Now](https://geo-trivia-sage.vercel.app)
+👉 [Play Now](https://pinpoint-ibrs.vercel.app)
 
 ## 🎮 Game Modes
 - **Flag Mode**: Guess the country by its flag.
 - **Capital Mode**: Match the capital to the correct country.
-- *(Future)*: Additional modes like location pin on a map (coming soon).
+- **Survival Mode**: Answer as many questions as possible without making a mistake.
 
 ## 🛠️ Tech Stack
 - **Frontend:** React, JavaScript, HTML/CSS
 - **Styling:** CSS Modules
+- **Backend:** Firebase for authentication and leaderboard storage
 - **Deployment:** Vercel
 
 ## 🚀 Features
@@ -23,6 +22,8 @@ An interactive geography quiz web app built with React that challenges players t
 - Score tracking throughout the session.
 - Clean, responsive UI.
 - Randomized question order using a custom shuffle algorithm.
+- Global leaderboard for survival mode.
+- Authentication system for saving scores.
 
 ## 📦 Installation
 
@@ -36,10 +37,4 @@ npm start
 ```
 
 ## 🧠 Inspiration
-- This project was built to sharpen React skills and make geography learning fun and engaging. Over 50 users have played and enjoyed it since launch.
-- I personally love geography and wanted to make a project related to one of my interests
-
-## 🧪 Future Improvements
-- Add global leaderboard.
-- Support for map-based location guessing.
-- Timer mode for extra challenge.
+This project was built to sharpen React skills and make geography learning fun and engaging. Over 50 users have played and enjoyed it since launch. I personally love geography and wanted to make a project related to one of my interests.

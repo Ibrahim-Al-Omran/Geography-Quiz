@@ -321,4 +321,96 @@ button:focus-visible,
   }
 }
 
+/* Social buttons container */
+.socialButtons {
+  position: fixed;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 1000;
+  bottom: 1rem; /* Position at the bottom for all screens */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 1; /* Fully visible by default */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth animation */
+}
+
+/* Hidden state for social buttons */
+.socialButtons.hidden {
+  opacity: 0; /* Make buttons invisible */
+  transform: translateX(-50%) scale(0.9); /* Shrink buttons when hidden */
+  pointer-events: none; /* Disable interaction when hidden */
+}
+
+/* GitHub button */
+.socialButtons a[aria-label="GitHub"] {
+  background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+/* LinkedIn button */
+.socialButtons a[aria-label="LinkedIn"] {
+  background-color: #0077b5;
+  color: white;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+/* Toggle button for all screens */
+.toggleSocialButton {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: #4676fa; /* Match app's primary color */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toggleSocialButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop-specific styles */
+@media (min-width: 768px) {
+  .socialButtons {
+    bottom: 1rem; /* Keep buttons at the bottom for desktop */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth animation for desktop */
+  }
+
+  .socialButtons.hidden {
+    transform: translateX(-50%) scale(0.9); /* Shrink buttons when hidden */
+  }
+}
+
 
