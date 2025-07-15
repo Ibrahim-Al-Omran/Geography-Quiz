@@ -200,9 +200,9 @@
   .modalCard {
     margin: 0.5rem;
     height: auto;
-    max-height: none;
-    overflow-y: visible;
-    padding-bottom: 2.5rem; /* Extra space for mobile */
+    max-height: 70vh; /* Reduce max height for better accessibility */
+    overflow-y: auto;
+    padding-bottom: 2rem; /* Extra space for mobile */
     border-radius: 0.75rem;
   }
   
@@ -215,61 +215,69 @@
   }
   
   .filterContainer {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem;
     flex-direction: column;
     gap: 0.5rem;
   }
   
   .filterButton {
-    padding: 0.75rem;
-    font-size: 1rem;
+    padding: 0.5rem;
+    font-size: 0.9rem;
   }
-  
   
   .modalBody {
     padding: 1rem;
   }
   
+  .scoresList {
+    gap: 0.5rem; /* Reduce spacing between items */
+  }
+  
   .scoreItem {
-    padding: 0.75rem;
-    gap: 0.75rem;
+    padding: 0.5rem; /* Reduce padding */
+    gap: 0.5rem; /* Reduce gap between elements */
+    flex-direction: row; /* Keep items in a row */
+    align-items: center;
   }
   
   .rank {
-    font-size: 1.25rem;
-    min-width: 2.5rem;
+    font-size: 1.25rem; /* Slightly smaller rank font */
+    min-width: 2rem; /* Reduce width */
   }
   
   .playerName {
-    font-size: 1rem;
+    font-size: 0.9rem; /* Smaller font for player names */
+  }
+  
+  .scoreDetails {
+    font-size: 0.75rem; /* Smaller font for score details */
   }
   
   .streak {
-    font-size: 1.25rem;
+    font-size: 1.25rem; /* Slightly smaller streak font */
+    min-width: 2rem; /* Reduce width */
   }
 }
 
-@media (min-width: 769px) {
-  .modalCard {
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-}
-
+/* Further compression for very small screens */
 @media (max-width: 480px) {
   .scoreItem {
-    flex-direction: column;
+    flex-direction: column; /* Stack items vertically */
     text-align: center;
     gap: 0.5rem;
   }
   
   .rank {
-    font-size: 2rem;
+    font-size: 1.5rem; /* Slightly larger rank font for readability */
+  }
+  
+  .playerName {
+    font-size: 0.85rem; /* Smaller font for player names */
   }
   
   .streak {
-    font-size: 2rem;
-    color: #059669;
+    font-size: 1.5rem; /* Slightly larger streak font for readability */
+    color: #059669; /* Highlight streak */
   }
 }
 

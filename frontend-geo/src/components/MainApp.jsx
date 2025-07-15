@@ -79,7 +79,8 @@ function MainApp() {
     const result = await logoutUser();
     setLogin(false);
     if (result.success) {
-      restartQuiz();
+      // Reset all states to ensure the app goes back to the start screen
+      restartQuiz(true);
     }
   };
 
