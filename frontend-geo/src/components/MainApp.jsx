@@ -70,8 +70,12 @@ function MainApp() {
     survival,
     finished,
     started,
-    pause: isWaitingForNext,
-    onTimeout: () => handleAnswer(null)
+    pause: isWaitingForNext || !started || finished, // Pause if waiting, not started, or finished
+    onTimeout: () => {
+      if (!isWaitingForNext && started && survival) {
+        handleAnswer(null); // Handle timeout only if not paused
+      }
+    }
   });
 
   // Auth handlers
@@ -180,9 +184,10 @@ function MainApp() {
     setQuestionIdx(0);
     setScore(0);
     setStreak(0);
-    setTimeLeft(3);
+    setTimeLeft(3); // Reset timer
     setStarted(true);
     setFinished(false);
+    setIsWaitingForNext(false); // Reset waiting state
   }
 
   function setupParty(countries, selectedMode, selectedRegion, selectedDifficulty) {
@@ -241,16 +246,6 @@ function MainApp() {
     setSelectedAnswer(selected);
     setIsWaitingForNext(true);
 
-    if (mode === "party") {
-      if (selected === "A") {
-        nextQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
-        return;
-      }
-      else if (selected === "B") {
-        prevQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
-        return;
-      }
-    }
     const correct = selected === answer;
 
     if (correct) {
@@ -262,12 +257,26 @@ function MainApp() {
       setTimeout(() => {
         setFinished(true);
         setStreak(0);
+        setIsWaitingForNext(false); // Reset waiting state
       }, 1200);
       return;
     }
 
     setTimeout(() => {
-       nextQuestion(questionIdx, quiz, mode, survival, setQuestionIdx, setAnswer, setOptions, filteredCountries, setSelectedAnswer, setIsWaitingForNext, setFinished, setTimeLeft);
+      nextQuestion(
+        questionIdx,
+        quiz,
+        mode,
+        survival,
+        setQuestionIdx,
+        setAnswer,
+        setOptions,
+        filteredCountries,
+        setSelectedAnswer,
+        setIsWaitingForNext,
+        setFinished,
+        setTimeLeft
+      );
     }, 1200);
   }
 
@@ -312,26 +321,30 @@ function MainApp() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setIsAuthenticated(!!user);
-      
-      console.log('Auth state changed:', { 
-        isAuthenticated: !!user,
-        uid: user?.uid,
-        displayName: user?.displayName
-      });
-      
       if (user) {
-        fetchUserProfile(user.uid);
+        if (!isAuthenticated || user.uid !== user?.uid) {
+          setUser(user);
+          setIsAuthenticated(true);
+          fetchUserProfile(user.uid);
+          console.log('Auth state changed:', { 
+            isAuthenticated: true,
+            uid: user.uid,
+            displayName: user.displayName
+          });
+        }
       } else {
-        setUserProfile(null);
+        if (isAuthenticated) {
+          setUser(null);
+          setIsAuthenticated(false);
+          setUserProfile(null);
+          console.log('Auth state changed:', { isAuthenticated: false });
+        }
       }
-      
       setAuthChecked(true);
     });
 
     return () => unsubscribe();
-  }, [fetchUserProfile, setAuthChecked, setIsAuthenticated, setUser, setUserProfile]);
+  }, [fetchUserProfile, isAuthenticated, user?.uid]);
 
   // In your render function, show a loading state if authLoading is true
   if (loading || authLoading) {
